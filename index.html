@@ -15,18 +15,23 @@
 <body> 
 <div class="container">
   <div>
-    <canvas id="canvas" width="500" height="500"></canvas>
+    <canvas id="canvas" width="500" height="500" style=" cursor: cell"></canvas>
   </div>
+  <div class="color-pallete" style="cursor: pointer;">
+<div id="skyblue">
+ <b style="background:#a2b9bc; border-radius: 50%">Sky Blue</b>
+  </div>
+  <div id="red" >
+  <b style="background:#FF0000; border-radius: 50%">Red</b>
+  </div>
+  <div id="black">
+ <b style="background:#000000; border-radius: 50%">Black</b>
+  </div>
+</div>
   <div>
     <button id="save" type="button">
      Download PDF
     </button>
-    <input
-      type="file"
-      id="load"
-      name="avatar"
-      accept="image/png"
-    >
   </div>
 </div>
 </body> 

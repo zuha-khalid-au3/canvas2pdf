@@ -2,42 +2,62 @@ window.onload = () => {
   const canvas = document.getElementById('canvas');
   const saveButton = document.getElementById('save');
   const loadInput = document.getElementById('load');
-
-  new Drawing(canvas, saveButton, loadInput);
 };
 
-class Drawing {
-  constructor(canvas, saveButton, loadInput) {
-    this.isDrawing = false;
-
-    canvas.addEventListener('mousedown', () => this.startDrawing());
-    canvas.addEventListener('mousemove', (e) => this.draw(e));
-    canvas.addEventListener('mouseup', () => this.stopDrawing());
-
-    saveButton.addEventListener('click', () => this.save());
-    loadInput.addEventListener('change', (event) => this.load(event));
-
-    const rect = canvas.getBoundingClientRect();
-
-    this.offsetLeft = rect.left;
-    this.offsetTop = rect.top;
-
-    this.canvas = canvas;
-    this.context = this.canvas.getContext('2d');
-  }
-  startDrawing() {
-    this.isDrawing = true;
-  }
-  stopDrawing() {
-    this.isDrawing = false;
-  }
-  draw(event) {
-    if (this.isDrawing) {
-      this.context.fillRect(event.pageX - this.offsetLeft, event.pageY - this.offsetTop, 6, 6);
-    }
-  }
-  save() {
-    $('#save').click(function() {       
+$(function(){
+    var canvas=document.getElementById("canvas");
+    var context=canvas.getContext("2d");
+    var canvasOffset=$("#canvas").offset();
+    var offsetX=canvasOffset.left;
+    var offsetY=canvasOffset.top;
+    //context.strokeStyle = "#df4b26";
+    context.lineJoin = "round";
+    context.lineWidth = 5;
+    var clickX = new Array();
+    var clickY = new Array();
+    var clickDrag = new Array();
+    var paint;
+    var context;
+    $('#skyblue').click(function(){
+      context.strokeStyle = "#a2b9bc";
+    });
+    $('#red').click(function(){
+      context.strokeStyle = "#FF0000";
+    });
+    $('#black').click(function(){
+      context.strokeStyle = "#000000";
+    });
+        $('#canvas').mousedown(function(e){
+            var touchX = e.clientX - offsetX;
+            var touchY = e.clientY - offsetY;
+            paint = true;
+            clickX.push(e.clientX-offsetX);
+            clickY.push(e.clientY-offsetY);
+            lastX=touchX;
+            lastY=touchY;
+        });
+        $('#canvas').mousemove(function(e){
+            if(paint){
+                var x=e.clientX-offsetX;
+                var y=e.clientY-offsetY;
+                clickX.push(x);
+                clickY.push(y);
+                context.beginPath();
+                context.moveTo(lastX,lastY)
+                context.lineTo(x,y);
+                context.stroke();
+                context.closePath();
+                lastX=x;
+                lastY=y;
+            }
+        });
+        $('#canvas').mouseup(function(e){
+            paint = false;
+        });
+        $('#canvas').mouseleave(function(e){
+            paint = false;
+        });
+        $('#save').click(function() {       
         html2canvas($("#canvas"), {
             onrendered: function(canvas) {         
                 var imgData = canvas.toDataURL(
@@ -48,29 +68,8 @@ class Drawing {
             }
         });
     });
-  }
-  load(event) {
-    const file = [...event.target.files].pop();
-    this.readTheFile(file)
-      .then((image) => this.loadTheImage(image))
-  }
-  loadTheImage(image) {
-    const img = new Image();
-    const canvas = this.canvas;
-    img.onload = function () {
-      const context = canvas.getContext('2d');
-      context.clearRect(0, 0, canvas.width, canvas.height);
-      context.drawImage(img, 0, 0);
-    };
-    img.src = image;
-  }
-  readTheFile(file) {
-    const reader = new FileReader();
-    return new Promise((resolve) => {
-      reader.onload = (event) => {
-        resolve(event.target.result);
-      };
-      reader.readAsDataURL(file);
-    })
-  }
-}
+ 
+
+  
+
+ });
